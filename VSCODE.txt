@@ -6,7 +6,7 @@ VS Code Liveshare link:
 
 Copy text below to commit message when collaborating:
 
-Co-authored-by: Sebastian Villa <sebvc@users.noreply.github.com>
+Authored-by: Sebastian Villa <sebvc@users.noreply.github.com>
 Co-authored-by: mogunm <mogunm@users.noreply.github.com>
 Co-authored-by: Nick Vazquez <myachiman14@users.noreply.github.com>
 Co-authored-by: landonbrown112 <landonbrown112@users.noreply.github.com>
