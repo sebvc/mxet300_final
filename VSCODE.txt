@@ -1,1 +1,12 @@
-https://prod.liveshare.vsengsaas.visualstudio.com/join?1EA1557BFD4B2E14D0D1EE3DFB37133D0596
+VS Code Liveshare link:
+
+
+
+==============================================================
+
+Copy text below to commit message when collaborating:
+
+Co-authored-by: Sebastian Villa <sebvc@users.noreply.github.com>
+Co-authored-by: mogunm <mogunm@users.noreply.github.com>
+Co-authored-by: Nick Vazquez <myachiman14@users.noreply.github.com>
+Co-authored-by: landonbrown112 <landonbrown112@users.noreply.github.com>
