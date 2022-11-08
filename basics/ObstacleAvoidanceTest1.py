@@ -21,12 +21,17 @@ def inBound_rth(r,th):
         return  r < boundary_distance 
         '''
                    (.5, 0deg)
-        (0.4, 40deg)  _____  (0.4, -40deg)
+        (0.4, 40deg) .__W__. (0.4, -40deg)
                      |     |
         (.28 75deg) O|__L__|O (.28 -75deg)
 
         graph polar r = sqrt((.9cos(th))^2+(.6sin(th))^2)
         
+        KEY
+        O : motor/powered wheel
+        . : caster wheel
+        L : lidar
+        W : webcam
         '''      
     else: # outside of angles
         return False
@@ -51,7 +56,7 @@ if __name__ == "__main__":
             sc.driveClosedLoop(wheel_speeds,wheel_measured,0)  
 
         else: 
-            wheel_speeds = ik.getPdTargets( [0.5, 0.0])  
+            wheel_speeds = ik.getPdTargets( [0.25, 0.0])  
             wheel_measured = kin.getPdCurrent()
             sc.driveClosedLoop(wheel_speeds,wheel_measured,0)  
         

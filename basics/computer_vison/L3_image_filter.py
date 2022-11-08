@@ -1,5 +1,7 @@
 # This file defines a filter for openCV processing.
-# it is passed as an argument to the BASH command when running setup_mjpg_streamer
+# it is passed as an argument to the BASH command when running start_mjpg_streamer_pi.sh
+# i.e. 
+# bash start_mjpg_streamer_pi.sh L3_image_filter.py
 
 # Import external libraries
 import cv2
