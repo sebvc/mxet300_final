@@ -1,4 +1,4 @@
-import L2_vector
+import L2_vector as vec
 import L2_speed_control as sc
 import numpy as np
 import L2_kinematics as kin
@@ -8,6 +8,24 @@ from time import sleep
 
 lidar_points = 500
 
+def LIDAR_obstacle_seen(lidar_points):
+    global angle
+    nearestArray = vec.getNearest(lidar_points)
+    distance = nearestArray[0]
+    angle = nearestArray[1]
+    thetaDot = 0.0
+    return inBound_rth(distance,angle)
+def avoid_Obstacle():
+    global angle
+    if (angle >= 0): # if object on left (positive angle)
+        thetaDot = -3 #turn right (CW)
+        print("\t\t\tturning right (CW)")
+    else: # if object on right (negative angle)
+        thetaDot = 3 #turn left (CCW)
+        print("\t\t\tturning left (CCW)")
+    wheel_speeds = ik.getPdTargets(np.array([0,thetaDot]))
+    wheel_measured = kin.getPdCurrent()
+    sc.driveClosedLoop(wheel_speeds,wheel_measured,0)  
 
 # Bounding Box Function
 def inBound_rth(r,th):
@@ -38,7 +56,7 @@ def inBound_rth(r,th):
 
 if __name__ == "__main__":
     while(1):
-        nearestArray = L2_vector.getNearest(lidar_points)
+        nearestArray = vec.getNearest(lidar_points)
         distance = nearestArray[0]
         angle = nearestArray[1]
         thetaDot = 0.0
