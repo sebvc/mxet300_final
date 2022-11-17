@@ -45,7 +45,7 @@ v1_max = 70     # Maximum H value
 v2_max = 160    # Maximum S value
 v3_max = 255    # Maximum V value
 
-target_width = 100      # Target pixel width of tracked object
+target_width = 150      # Target pixel width of tracked object
 angle_margin = 0.2      # Radians object can be from image center to be considered "centered"
 width_margin = 10       # Minimum width error to drive forward/back
 

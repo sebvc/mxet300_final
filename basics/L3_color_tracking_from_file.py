@@ -54,7 +54,7 @@ def set_up_cam():
     camera.set(3, size_w)                       # Set width of images that will be retrived from camera
     camera.set(4, size_h)                       # Set height of images that will be retrived from camera
 
-def seeTarget():
+def seeTarget(prevstate):
     global v1_min, v2_min, v3_min, v1_max, v2_max, v3_max 
     global image 
     global height
@@ -65,6 +65,8 @@ def seeTarget():
     global mask
     global cnts
     global camera
+    global nextstate
+
     ret, image = camera.read()  # Get image from camera
 
     # Make sure image was grabbed
@@ -83,17 +85,27 @@ def seeTarget():
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)      # Close morph: fills openings w/ dilate followed by erode
     cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
                     cv2.CHAIN_APPROX_SIMPLE)[-2]                        # Find closed shapes in image
-            
-    return (len(cnts) and len(cnts) < 3) #boolean of if target found  # If more than 0 and less than 3 closed shapes exist
+    if (len(cnts) and len(cnts) < 3):
+        #nextstate = 1 # see ball
+        return True, 1 #boolean of if target found  # If more than 0 and less than 3 closed shapes exist
+    elif (prevstate == 2): # if alligned last
+        #nextstate = 3 # got ball
+        return False, 3
+    else:
+        #nextstate = 0 # no ball
+        return False, 0
+# def returnState():
+#     return nextstate
 
-def goToBall(): 
+def goToBall(state,align_count): 
     global cnts
     global width
     global angle_margin
     global target_width
     global width_margin
     global fov
-
+    # global state
+    
     c = max(cnts, key=cv2.contourArea)                      # return the largest target area
     x,y,w,h = cv2.boundingRect(c)                           # Get bounding rectangle (x,y,w,h) of the largest contour
     center = (int(x+0.5*w), int(y+0.5*h))                   # defines center of rectangle around the largest target area
@@ -109,21 +121,22 @@ def goToBall():
         if abs(e_width) < width_margin:
             sc.driveOpenLoop(np.array([0.,0.]))             # Stop when centered and aligned
             print("Aligned! ",w)
+            state = 2 # aligned
             sleep(0.15)
-            return
-
+            return state, align_count+1
         fwd_effort = e_width/target_width                   
                 
-        wheel_speed = ik.getPdTargets(np.array([0.8*fwd_effort, -0.5*angle]))   # Find wheel speeds for approach and heading correction
+        wheel_speed = ik.getPdTargets(np.array([0.5*fwd_effort, -0.4*angle]))   # Find wheel speeds for approach and heading correction
         sc.driveClosedLoop(wheel_speed, wheel_measured, 0)  # Drive closed loop
         print("Angle: ", angle, " | Target L/R: ", *wheel_speed, " | Measured L\R: ", *wheel_measured)
-        return
+        return state, 0
 
     wheel_speed = ik.getPdTargets(np.array([0, -1.1*angle]))    # Find wheel speeds for only turning
 
     sc.driveClosedLoop(wheel_speed, wheel_measured, 0)          # Drive robot
     print("Angle: ", angle, " | Target L/R: ", *wheel_speed, " | Measured L\R: ", *wheel_measured)
-        
+    return state, 0
+
 def getHSVfromCSV(object_name_key):
     global v1_min
     global v2_min
