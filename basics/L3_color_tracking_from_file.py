@@ -96,7 +96,45 @@ def seeTarget(prevstate):
         return False, 0
 # def returnState():
 #     return nextstate
+def goToGoal(state,align_count): 
+    global cnts
+    global width
+    global angle_margin
+    global target_width
+    global width_margin
+    global fov
+    # global state
+    
+    c = max(cnts, key=cv2.contourArea)                      # return the largest target area
+    x,y,w,h = cv2.boundingRect(c)                           # Get bounding rectangle (x,y,w,h) of the largest contour
+    center = (int(x+0.5*w), int(y+0.5*h))                   # defines center of rectangle around the largest target area
+    angle = round(((center[0]/width)-0.5)*fov, 3)           # angle of vector towards target center from camera, where 0 deg is centered
 
+    wheel_measured = kin.getPdCurrent()                     # Wheel speed measurements
+
+    # If robot is facing target
+    if abs(angle) < angle_margin:                                 
+        e_width = target_width - w                          # Find error in target width and measured width
+        print("Target Width: ", target_width," actual width:",w)
+                    # If error width is within acceptable margin
+        if abs(e_width) < width_margin:
+            sc.driveOpenLoop(np.array([0.,0.]))             # Stop when centered and aligned
+            print("Aligned! ",w)
+            state = 2 # aligned
+            sleep(0.15)
+            return state, align_count+1
+        fwd_effort = e_width/target_width                   
+                
+        wheel_speed = ik.getPdTargets(np.array([0.5*fwd_effort, -0.4*angle]))   # Find wheel speeds for approach and heading correction
+        sc.driveClosedLoop(wheel_speed, wheel_measured, 0)  # Drive closed loop
+        print("Angle: ", angle, " | Target L/R: ", *wheel_speed, " | Measured L\R: ", *wheel_measured)
+        return state, 0
+
+    wheel_speed = ik.getPdTargets(np.array([0, -1.1*angle]))    # Find wheel speeds for only turning
+
+    sc.driveClosedLoop(wheel_speed, wheel_measured, 0)          # Drive robot
+    print("Angle: ", angle, " | Target L/R: ", *wheel_speed, " | Measured L\R: ", *wheel_measured)
+    return state, 0
 def goToBall(state,align_count): 
     global cnts
     global width
@@ -116,7 +154,7 @@ def goToBall(state,align_count):
     # If robot is facing target
     if abs(angle) < angle_margin:                                 
         e_width = target_width - w                          # Find error in target width and measured width
-
+        print("Target Width: ", target_width," actual width:",w)
                     # If error width is within acceptable margin
         if abs(e_width) < width_margin:
             sc.driveOpenLoop(np.array([0.,0.]))             # Stop when centered and aligned

@@ -8,12 +8,16 @@ import numpy as np                                  # for handling arrays
 import L1_motor as m                               # for controlling motors
 
 # Initialize variables
+#original 
+# kp =0.1
+# ki = 0.4
+# kd = 0.0
 u_integral = 0
 phi_max = 7.
 DRS = 1.0                                           # direct rescaling - for open-loop motor duty
 kp = 0.1                                            # proportional term
-ki = 0.04                                           # integral term
-kd = 0.04                                           # derivative term
+ki = 0.06                                           # integral term
+kd = 0.02                                          # derivative term
 pidGains = np.array([kp, ki, kd])                   # form an array to collect pid gains.
 
 # a function for converting target rotational speeds to PWMs without feedback

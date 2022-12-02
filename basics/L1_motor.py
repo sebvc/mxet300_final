@@ -36,6 +36,13 @@ def sendRight(mySpeed):         # takes at least 0.3 ms
     myPWM = computePWM(mySpeed)
     right_chB.value = myPWM[0]
     right_chA.value = myPWM[1]
+def driveMotors(speed):
+    sendLeft(speed)
+    sendRight(speed)
+
+def stopMotor():
+    sendLeft(0)
+    sendRight(0)
 
 # THIS LOOP ONLY RUNS IF THE PROGRAM IS CALLED DIRECTLY
 if __name__ == "__main__":
