@@ -18,10 +18,10 @@ def LIDAR_obstacle_seen(lidar_points):
 def avoid_Obstacle():
     global angle
     if (angle >= 0): # if object on left (positive angle)
-        thetaDot = -3 #turn right (CW)
+        thetaDot = -2 #turn right (CW)
         print("\t\t\tturning right (CW)")
     else: # if object on right (negative angle)
-        thetaDot = 3 #turn left (CCW)
+        thetaDot = 2 #turn left (CCW)
         print("\t\t\tturning left (CCW)")
     wheel_speeds = ik.getPdTargets(np.array([0,thetaDot]))
     wheel_measured = kin.getPdCurrent()

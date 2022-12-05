@@ -10,7 +10,7 @@ import netifaces as ni
 from time import sleep
 from math import radians, pi
 import csv
-
+import L1_motor as motor
 
 # Gets IP to grab MJPG stream
 def getIp():
@@ -118,14 +118,14 @@ def goToGoal(state,align_count):
         print("Target Width: ", target_width," actual width:",w)
                     # If error width is within acceptable margin
         if abs(e_width) < width_margin:
-            sc.driveOpenLoop(np.array([0.,0.]))             # Stop when centered and aligned
+            motor.stopMotor()#sc.driveOpenLoop(np.array([0.,0.]))             # Stop when centered and aligned
             print("Aligned! ",w)
             state = 2 # aligned
             sleep(0.15)
             return state, align_count+1
         fwd_effort = e_width/target_width                   
-                
-        wheel_speed = ik.getPdTargets(np.array([0.5*fwd_effort, -0.4*angle]))   # Find wheel speeds for approach and heading correction
+                                                    #These were originally 0.5 & 0.4
+        wheel_speed = ik.getPdTargets(np.array([0.25*fwd_effort, -0.2*angle]))   # Find wheel speeds for approach and heading correction
         sc.driveClosedLoop(wheel_speed, wheel_measured, 0)  # Drive closed loop
         print("Angle: ", angle, " | Target L/R: ", *wheel_speed, " | Measured L\R: ", *wheel_measured)
         return state, 0
@@ -157,19 +157,19 @@ def goToBall(state,align_count):
         print("Target Width: ", target_width," actual width:",w)
                     # If error width is within acceptable margin
         if abs(e_width) < width_margin:
-            sc.driveOpenLoop(np.array([0.,0.]))             # Stop when centered and aligned
+            motor.stopMotor() ## sc.driveOpenLoop(np.array([0.,0.]))             # Stop when centered and aligned
             print("Aligned! ",w)
             state = 2 # aligned
             sleep(0.15)
             return state, align_count+1
         fwd_effort = e_width/target_width                   
-                
-        wheel_speed = ik.getPdTargets(np.array([0.5*fwd_effort, -0.4*angle]))   # Find wheel speeds for approach and heading correction
+                                        #0.5 & 0.4 original
+        wheel_speed = ik.getPdTargets(np.array([0.3*fwd_effort, -0.25*angle]))   # Find wheel speeds for approach and heading correction
         sc.driveClosedLoop(wheel_speed, wheel_measured, 0)  # Drive closed loop
         print("Angle: ", angle, " | Target L/R: ", *wheel_speed, " | Measured L\R: ", *wheel_measured)
         return state, 0
 
-    wheel_speed = ik.getPdTargets(np.array([0, -1.1*angle]))    # Find wheel speeds for only turning
+    wheel_speed = ik.getPdTargets(np.array([0, -0.25*angle]))    # Find wheel speeds for only turning
 
     sc.driveClosedLoop(wheel_speed, wheel_measured, 0)          # Drive robot
     print("Angle: ", angle, " | Target L/R: ", *wheel_speed, " | Measured L\R: ", *wheel_measured)
