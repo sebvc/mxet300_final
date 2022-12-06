@@ -30,23 +30,25 @@ state meaning:
 if __name__ == "__main__":
     track.getHSVfromCSV("tennisball")
     track.set_up_cam()
-    #servo.setup()
-    #servo.open()
+    servo.setup()
+    servo.open()
     snake =1
     snake_count=0
 
     try:
-        '''
+        servo.ChangeDutyCycle(1)
+        
         while True:
             print("State: ",state)
             #time.sleep(5);
             target_seen, state = track.seeTarget(state)
-            if (avoid.LIDAR_obstacle_seen(lidar_points)):
-            #if(False):
+            #if (avoid.LIDAR_obstacle_seen(lidar_points)):
+            if(False):
                 # AVOID with lidar
                 print("LIDAR",end=' ')
                 avoid.avoid_Obstacle()
             elif(target_seen):
+            #elif(False):
                 print("WEBCAM Ball",end=' ')
                 state, align_count = track.goToBall(state,align_count)
                 #run ball tracking
@@ -55,7 +57,7 @@ if __name__ == "__main__":
             else: # default free path
                 print("Default Path")
                 
-                wheel_speeds = ik.getPdTargets( [0.15, 0.0])  # default parameters
+                wheel_speeds = ik.getPdTargets( [0.25, 0.0])  # default parameters
                 snake_count+=1
                 if snake_count >=15:
                     snake_count=0
@@ -66,6 +68,7 @@ if __name__ == "__main__":
             # if(state==3):
             #     servo.ChangeDutyCycle(1) 
             if(align_count>=3):
+            #if(False):
                 print("\n\nball found!!!!\n")
                 time.sleep(2)
                 wheel_speeds = ik.getPdTargets([0.15, 0.0])  # default parameters
@@ -77,11 +80,12 @@ if __name__ == "__main__":
                 time.sleep(1.75)
                 servo.ChangeDutyCycle(1)
                 time.sleep(0.5)
-                #motor.stopMotor()
+                motor.stopMotor()
+                
                 break
-                '''
+    
             
-        track.getHSVfromCSV("goal")
+        #track.getHSVfromCSV("tennisball")
         servo.ChangeDutyCycle(1)
         
         while True: # has ball.
@@ -90,23 +94,26 @@ if __name__ == "__main__":
             target_seen, state = track.seeTarget(state)
             print("Has Ball")
            
-            #if (avoid.LIDAR_obstacle_seen(lidar_points)):
-            if(False):
+            if (avoid.LIDAR_obstacle_seen(lidar_points)):
+            #if(False):
                 # AVOID with lidar
                 print("LIDAR",end=' ')
                 avoid.avoid_Obstacle()
             elif(target_seen):
+            #elif(False):
                 print("WEBCAM Goal",end=' ')
-                state, align_count1 = track.goToGoal(state,align_count1)
+                state, align_count1 = track.goToBall(state,align_count1)
                 #run ball tracking
             else:
                 print("Default Path")
-                wheel_speeds = ik.getPdTargets( [0.15, 0.0])  # default parameters
+                wheel_speeds = ik.getPdTargets( [0.25, 0.0])  # default parameters
                     
                 wheel_measured = kin.getPdCurrent()
-                sc.driveClosedLoop(wheel_speeds,wheel_measured,0)
+                #sc.driveClosedLoop(wheel_speeds,wheel_measured,0)
+                sc.driveOpenLoop(wheel_speeds)
                 print("im here")
             if(align_count1>=3):
+            #if(False):
                 print("\n\goal found!!!!\n")
                 servo.ChangeDutyCycle(10)
                 time.sleep(2)
@@ -118,7 +125,7 @@ if __name__ == "__main__":
                 time.sleep(1.75)
                 motor.stopMotor()                  
                 break
-
+                
 
     except KeyboardInterrupt: # condition added to catch a "Ctrl-C" event and exit cleanly
         pass
